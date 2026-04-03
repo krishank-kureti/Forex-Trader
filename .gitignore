@@ -40,3 +40,6 @@ test-output/
 # Application
 application.properties
 !src/main/resources/application.properties.example
+
+#AI
+AGENTS.md
