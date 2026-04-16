@@ -4,6 +4,7 @@ import com.forex.dto.WalletRequest;
 import com.forex.dto.WalletResponse;
 import com.forex.model.Transaction;
 import com.forex.patterns.facade.WalletFacade;
+import com.forex.service.AuthService;
 import com.forex.service.TransactionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,10 +19,12 @@ public class WalletController {
     
     private final WalletFacade walletFacade;
     private final TransactionService transactionService;
+    private final AuthService authService;
     
-    public WalletController(WalletFacade walletFacade, TransactionService transactionService) {
+    public WalletController(WalletFacade walletFacade, TransactionService transactionService, AuthService authService) {
         this.walletFacade = walletFacade;
         this.transactionService = transactionService;
+        this.authService = authService;
     }
     
     @PostMapping("/deposit")
@@ -29,6 +32,16 @@ public class WalletController {
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody WalletRequest request) {
         Long traderId = getTraderId(userDetails);
+        
+        if (request.getPassword() == null || request.getPassword().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        boolean verified = authService.verifyPassword(traderId, request.getPassword());
+        if (!verified) {
+            return ResponseEntity.status(401).build();
+        }
+        
         return ResponseEntity.ok(walletFacade.deposit(traderId, request.getAmount()));
     }
     
@@ -37,6 +50,16 @@ public class WalletController {
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody WalletRequest request) {
         Long traderId = getTraderId(userDetails);
+        
+        if (request.getPassword() == null || request.getPassword().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        boolean verified = authService.verifyPassword(traderId, request.getPassword());
+        if (!verified) {
+            return ResponseEntity.status(401).build();
+        }
+        
         return ResponseEntity.ok(walletFacade.withdraw(traderId, request.getAmount()));
     }
     
