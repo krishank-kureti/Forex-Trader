@@ -72,4 +72,10 @@ public class AuthService {
         
         return new AuthResponse(token, user.getUsername(), user.getRole().name());
     }
+    
+    public boolean verifyPassword(Long userId, String password) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return passwordEncoder.matches(password, user.getPassword());
+    }
 }
