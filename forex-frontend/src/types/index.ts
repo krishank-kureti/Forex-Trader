@@ -1,65 +1,83 @@
+// Authentication Types
 export interface User {
-  id: string;
-  email: string;
-  name: string;
-  createdAt: string;
+ id: number;
+ username: string;
+ email: string;
+ role: 'TRADER' | 'ADMIN';
 }
-
-export interface Wallet {
-  id: string;
-  userId: string;
-  balance: number;
-  currency: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Trade {
-  id: string;
-  userId: string;
-  type: 'BUY' | 'SELL';
-  pair: string;
-  amount: number;
-  rate: number;
-  status: 'PENDING' | 'COMPLETED' | 'FAILED';
-  createdAt: string;
-  settledAt?: string;
-}
-
-export interface ExchangeRate {
-  pair: string;
-  bid: number;
-  ask: number;
-  timestamp: string;
-}
-
-export interface Settlement {
-  id: string;
-  tradeId: string;
-  amount: number;
-  status: 'PENDING' | 'PROCESSED' | 'FAILED';
-  processedAt?: string;
-  createdAt: string;
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface RegisterRequest {
-  email: string;
-  password: string;
-  name: string;
-}
-
 export interface AuthResponse {
-  token: string;
-  user: User;
+ token: string;
+ username: string;
+ role: string;
 }
-
-export interface TradeRequest {
-  type: 'BUY' | 'SELL';
-  pair: string;
-  amount: number;
+export interface LoginRequest {
+ username: string;
+ password: string;
+}
+export interface RegisterRequest {
+ username: string;
+ email: string;
+ password: string;
+ role?: 'TRADER' | 'ADMIN';
+}
+// Wallet Types
+export interface WalletRequest {
+ amount: number;
+ password?: string;
+}
+export interface WalletResponse {
+ walletId: number;
+ balance: number;
+ currency: string;
+ status: 'SUCCESS' | 'FAILED' | 'PENDING';
+ message?: string;
+}
+export interface Transaction {
+ id: number;
+ walletId: number;
+ type: 'DEPOSIT' | 'WITHDRAWAL';
+ amount: number;
+ status: 'SUCCESS' | 'FAILED' | 'PENDING';
+ timestamp: string;
+ message?: string;
+}
+// Trade Types
+export interface OrderRequest {
+ currencyPairId: number;
+ type: 'BUY' | 'SELL';
+ amount: number;
+ price?: number;
+}
+export interface OrderResponse {
+ orderId: number;
+ currencyPair: string;
+ type: 'BUY' | 'SELL';
+ amount: number;
+ price?: number;
+ status: string;
+ createdAt: string;
+}
+// Exchange Rate Types
+export interface ExchangeRates {
+ [pair: string]: number;
+}
+// Settlement Types
+export interface SettlementResponse {
+ settlementId: number;
+ tradeId: number;
+ amount: number;
+ fee: number;
+ status: string;
+ settledAt: string;
+}
+// Trade History Types
+export interface TradeHistoryResponse {
+ id: number;
+ tradeId: number;
+ type: string;
+ currencyPair: string;
+ amount: number;
+ price: number;
+ pnl?: number;
+ timestamp: string;
 }
